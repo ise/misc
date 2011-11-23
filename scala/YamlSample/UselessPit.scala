@@ -2,20 +2,25 @@ import java.io.File
 import java.util.HashMap
 import org.ho.yaml.Yaml
 
-class UselessPit(topKey:String) {
-  private val _pitDir = System.getProperty("user.home") + "/.pit"
-  private val _pitConfig:HashMap[String,String]= (Yaml.load(new File(_pitDir + "/pit.yaml"))).asInstanceOf[HashMap[String,String]]
+class UselessPit(target:String) {
 
-  private val _profileConfig:HashMap[String,Any] = (Yaml.load(new File(_pitDir + "/" + _pitConfig.get("profile") + ".yaml"))).asInstanceOf[HashMap[String,Any]]
-  private val _targetConfig:HashMap[String,String] = (_profileConfig.get(topKey)).asInstanceOf[HashMap[String,String]]
+  def get(key:String):String = _load.get(target).get(key)
 
-  def get(key:String):String = _targetConfig.get(key)
+  def getAll:HashMap[String,String] = _load.get(target)
 
-  def getAll:HashMap[String,String] = _targetConfig
+  def set(key:String, value:String):Unit = {
+    return
+    val config = _load
+    val targetConfig = config.get(target)
+    targetConfig.put(key,value)
+    config.put(target,targetConfig)
+    Yaml.dump(config, new File("./out.yaml"))
+  }
 
-  def set(key:String, value:String) = {
-    _targetConfig.put(key,value)
-    println(_targetConfig)
+  private def _load:HashMap[String,HashMap[String,String]] = {
+    val pitDir = System.getProperty("user.home") + "/.pit"
+    val pit:HashMap[String,String] = (Yaml.load(new File(pitDir + "/pit.yaml"))).asInstanceOf[HashMap[String,String]]
+    (Yaml.load(new File(pitDir + "/" + pit.get("profile") + ".yaml"))).asInstanceOf[HashMap[String,HashMap[String,String]]]
   }
 
 }
