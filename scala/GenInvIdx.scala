@@ -19,16 +19,21 @@ files.foreach(f => genInvIdx(f))
 val oos = new ObjectOutputStream(new FileOutputStream(dir + "/idx/index"));
 oos.writeObject(invIdx);
 
-def genInvIdx(file:File) = {
+def genInvIdx(file:File):Unit = {
   // ファイル読み込み, 転置Index作成
   val source = Source.fromFile(file)
   val lines = source.getLines()
   val name = file.getName()
-  lines.foreach(
-    _.split(" ").foreach(w => {
-      invIdx.get(w) match {
-        case Some(n) => invIdx.update(w, n + name)
-        case None => invIdx(w) = HashSet(name)
-      }
-    }))
+  println("Gen index from " + name)
+  try {
+    lines.foreach(
+      _.split(" ").foreach(w => {
+        invIdx.get(w) match {
+          case Some(n) => invIdx.update(w, n + name)
+          case None => invIdx(w) = HashSet(name)
+        }
+      }))
+  } catch {
+    case e: java.nio.charset.MalformedInputException => return
+  }
 }
