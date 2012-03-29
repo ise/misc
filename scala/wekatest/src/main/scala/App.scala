@@ -1,11 +1,4 @@
 package com.example.WekaTest
-/*
- object App {
- def main(args: Array[String]) {
- print("Hello com.example.WekaTest!")
- }
- }
- */
 
 import weka.core._
 import weka.classifiers._
